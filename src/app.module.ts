@@ -28,9 +28,7 @@ import { ConfigModule } from '@nestjs/config';
         };
       },
     }),
-    NotificationModule,
-    
-    
+    NotificationModule,     
   ],
   controllers: [AppController],
   providers: [AppService],

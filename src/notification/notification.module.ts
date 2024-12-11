@@ -4,9 +4,17 @@ import { NotificationResolver } from './notification.resolver';
 import { jwtModule, redisModule } from 'src/modules.config';
 import { ConfigModule } from '@nestjs/config';
 import { NotificationsGateway } from './notification.gateway';
+import { NotificationController } from './notification.controller';
+import { NotificationRepository } from './notification.repository';
 
 @Module({
   imports: [ConfigModule, redisModule, jwtModule],
-  providers: [NotificationService, NotificationResolver, NotificationsGateway],
+  providers: [
+    NotificationService,
+    NotificationRepository,
+    NotificationResolver,
+    NotificationsGateway,
+  ],
+  controllers: [NotificationController],
 })
 export class NotificationModule {}

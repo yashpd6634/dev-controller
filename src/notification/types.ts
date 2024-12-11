@@ -7,5 +7,21 @@ type AuthPayload = {
   name: string;
 };
 
+// service types
+export type CreateNotificationFields = {
+  userId: string;
+  title: string;
+  body: string;
+  // createdAt: Date;
+};
+
+//repository types
+export type CreateNotificationData = {
+  notificationId: string;
+  title: string;
+  body: string;
+  userId: string;
+}
+
 export type RequestWithAuth = Request & AuthPayload;
 export type SocketWithAuth = Socket & AuthPayload;
