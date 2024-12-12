@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RequestWithAuth } from 'src/notification/types';
+import { RequestWithAuth } from 'src/modules/notification/types';
 
 @Injectable()
 export class ControllerAuthGuard implements CanActivate {

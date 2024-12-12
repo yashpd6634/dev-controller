@@ -5,8 +5,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
-import { NotificationModule } from './notification/notification.module';
+import { NotificationModule } from './modules/notification/notification.module';
 import { ConfigModule } from '@nestjs/config';
+import { ChatsModule } from './modules/chats/chats.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { ConfigModule } from '@nestjs/config';
         };
       },
     }),
-    NotificationModule,     
+    NotificationModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

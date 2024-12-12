@@ -1,13 +1,24 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { NotificationService } from './notification.service';
-import { CreateNotificationDto } from './dto/create-notification-dto';
+import { CreateNotificationDto } from './dtos/create-notification-dto';
+import { ControllerAuthGuard } from 'src/common/guards/auth.guard';
+import { RequestWithAuth } from './types';
 
 @Controller('notifications')
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
 
+  @UseGuards(ControllerAuthGuard)
   @Get()
-  async get() {
+  async get(@Req() request: RequestWithAuth) {
     Logger.log('In Get');
   }
 

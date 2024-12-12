@@ -1,5 +1,5 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RedisModule } from './redis.module';
+import { RedisModule } from '../common/redis/redis.module';
 import { Logger } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 

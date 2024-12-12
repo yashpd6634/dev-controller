@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateNotificationFields } from './types';
-import { createNotificationID } from 'src/utils';
+import { createNotificationID } from 'src/common/utils/utils';
 import { NotificationRepository } from './notification.repository';
 
 @Injectable()

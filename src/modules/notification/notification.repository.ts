@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
-import { IORedisKey } from 'src/redis.module';
+import { IORedisKey } from 'src/common/redis/redis.module';
 import { CreateNotificationData, CreateNotificationFields } from './types';
 
 @Injectable()
@@ -43,7 +43,13 @@ export class NotificationRepository {
     try {
       await this.redisClient
         .multi([
-          ['call','JSON.SET', key, '.', JSON.stringify(initialNotificationData)],
+          [
+            'call',
+            'JSON.SET',
+            key,
+            '.',
+            JSON.stringify(initialNotificationData),
+          ],
           ['expire', key, Number(this.ttl)],
         ])
         .exec();

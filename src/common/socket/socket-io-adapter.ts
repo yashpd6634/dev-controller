@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
-import { SocketWithAuth } from './notification/types';
+import { SocketWithAuth } from './modules/notification/types';
 
 export class SocketIOAdapter extends IoAdapter {
   private readonly logger = new Logger(SocketIOAdapter.name);

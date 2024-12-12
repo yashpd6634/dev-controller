@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import { ConfigService } from '@nestjs/config';
-import { SocketIOAdapter } from './socket-io-adapter';
+import { SocketIOAdapter } from './common/socket/socket-io-adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
