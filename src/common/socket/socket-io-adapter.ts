@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
-import { SocketWithAuth } from './modules/notification/types';
+import { SocketWithAuth as SocketWithNotificationAuth } from 'src/modules/notification/types';
+import { SocketWithAuth as SocketWithChatAuth } from 'src/modules/chats/types';
 
 export class SocketIOAdapter extends IoAdapter {
   private readonly logger = new Logger(SocketIOAdapter.name);
@@ -33,13 +34,13 @@ export class SocketIOAdapter extends IoAdapter {
     const jwtService = this.app.get(JwtService);
     const server: Server = super.createIOServer(port, optionsWithCORS);
 
-    server
-      .of('notifications')
-      .use(createTokenMiddleware(jwtService, this.logger));
+    server.of('chats').use(createTokenMiddleware(jwtService, this.logger));
 
     return server;
   }
 }
+
+type SocketWithAuth = SocketWithNotificationAuth | SocketWithChatAuth;
 
 const createTokenMiddleware =
   (jwtService: JwtService, logger: Logger) =>
@@ -52,8 +53,15 @@ const createTokenMiddleware =
     try {
       const payload = jwtService.verify(token);
       socket.userId = payload.sub;
-      socket.notificationId = payload.notificationId;
+      if ('notificationId' in payload) {
+        (socket as SocketWithNotificationAuth).notificationId =
+          payload.notificationId;
+      }
+      if ('roomId' in payload) {
+        (socket as SocketWithChatAuth).roomId = payload.roomId;
+      }
       socket.name = payload.name;
+      next();
     } catch (error) {
       next(new Error('FORBIDDEN'));
     }

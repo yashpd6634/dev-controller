@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RequestWithAuth } from 'src/modules/notification/types';
+import { RequestWithNotificationAuth } from 'src/modules/notification/types';
 
 @Injectable()
 export class ControllerAuthGuard implements CanActivate {
@@ -14,7 +14,9 @@ export class ControllerAuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> {
-    const request: RequestWithAuth = context.switchToHttp().getRequest();
+    const request: RequestWithNotificationAuth = context
+      .switchToHttp()
+      .getRequest();
 
     this.logger.debug('Checking for auth token on request body', request.body);
 
@@ -23,7 +25,12 @@ export class ControllerAuthGuard implements CanActivate {
     try {
       const payload = this.jwtService.verify(accessToken);
       request.userId = payload.sub;
-      request.notificationId = payload.notificationId;
+      if ('notificationId' in request) {
+        request.notificationId = payload.notificationId;
+      }
+      if ('roomId' in request) {
+        request.roomId = payload.roomId;
+      }
       request.name = payload.name;
       return true;
     } catch (error) {

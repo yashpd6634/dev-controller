@@ -3,22 +3,23 @@ import { createRoomID } from 'src/common/utils/utils';
 import { CreateRoomDto } from '../dtos/room/create-room-dto';
 import { JwtService } from '@nestjs/jwt';
 import { JoinRoomDto } from '../dtos/room/join-room-dto';
+import { RoomRepository } from '../repository/room.respository';
 
 @Injectable()
 export class RoomService {
   private readonly logger = new Logger(RoomService.name);
   constructor(
     private readonly jwtService: JwtService,
-    // private readonly notificationRepository: NotificationRepository,
+    private readonly roomRepository: RoomRepository,
   ) {}
 
-  async createRoom(userId: string, createRoomDto: CreateRoomDto) {
+  async createRoom(createRoomDto: CreateRoomDto) {
     const roomId = createRoomID();
 
-    // const createdRoom = await this.roomRepository.createNotification({
-    //   ...createRoomDto,
-    //   roomId,
-    // });
+    const createdRoom = await this.roomRepository.createRoom({
+      ...createRoomDto,
+      roomId,
+    });
 
     // this.logger.debug(
     //   `Creating token stirng for notificationID: ${createdRoom.notificationId} and userID: ${createRoomDto.name}`,
@@ -27,44 +28,45 @@ export class RoomService {
     const signedString = this.jwtService.sign(
       {
         // notificationID: createdNotification.notificationId,
-        name: createRoomDto.name,
+        name: createdRoom.title,
+        roomId: createdRoom.id,
       },
       {
-        subject: userId,
+        subject: createRoomDto.userId,
       },
     );
 
     return {
       // notification: createdNotification,
-      notification: createRoomDto,
+      room: createdRoom,
       accessToken: signedString,
     };
   }
 
-  async joinRoom(userId: string, createRoomDto: JoinRoomDto) {
+  async joinRoom(joinRoomDto: JoinRoomDto) {
     this.logger.debug(
-      `Fetching poll with ID: ${createRoomDto.roomId} for user with ID: ${userId}`,
+      `Fetching poll with ID: ${joinRoomDto.roomId} for user with ID: ${joinRoomDto.userId}`,
     );
 
-    // const joinedPoll = await this.pollsRepository.getPoll(createRoomDto.roomId);
+    const joinedRoom = await this.roomRepository.getRoom(joinRoomDto.roomId);
 
     this.logger.debug(
-      `Creating token string for pollID: ${createRoomDto.roomId} and userID: ${userId}`,
+      `Creating token string for roomId: ${joinedRoom.id} and userID: ${joinRoomDto.userId}`,
     );
 
     const signedString = this.jwtService.sign(
       {
-        roomId: createRoomDto.roomId,
-        // name: createRoomDto.roomId,
+        roomId: joinedRoom.id,
+        name: joinedRoom.title,
       },
       {
-        // subject: userId,
+        subject: joinRoomDto.userId,
       },
     );
 
     return {
       // poll: joinedPoll,
-      poll: createRoomDto,
+      room: joinedRoom,
       accessToken: signedString,
     };
   }

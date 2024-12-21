@@ -10,7 +10,7 @@ import {
 import { NotificationService } from './notification.service';
 import { CreateNotificationDto } from './dtos/create-notification-dto';
 import { ControllerAuthGuard } from 'src/common/guards/auth.guard';
-import { RequestWithAuth } from './types';
+import { RequestWithNotificationAuth } from './types';
 
 @Controller('notifications')
 export class NotificationController {
@@ -18,7 +18,7 @@ export class NotificationController {
 
   @UseGuards(ControllerAuthGuard)
   @Get()
-  async get(@Req() request: RequestWithAuth) {
+  async get(@Req() request: RequestWithNotificationAuth) {
     Logger.log('In Get');
   }
 

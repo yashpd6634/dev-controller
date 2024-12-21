@@ -23,5 +23,5 @@ export type CreateNotificationData = {
   userId: string;
 }
 
-export type RequestWithAuth = Request & AuthPayload;
+export type RequestWithNotificationAuth = Request & AuthPayload;
 export type SocketWithAuth = Socket & AuthPayload;

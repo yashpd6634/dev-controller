@@ -17,14 +17,16 @@ export class CreateRoomDto {
 
   @IsString()
   @IsOptional()
-  name: string;
+  title: string;
 
-  @IsArray()
-  @IsString({ each: true })
-  @IsUUID(undefined, {
-    each: true,
-    message: 'Each participant must be a valid UUID',
-  })
-  @IsNotEmpty()
-  participants: string[];
+  userId: string;
+
+  // @IsArray()
+  // @IsString({ each: true })
+  // @IsUUID(undefined, {
+  //   each: true,
+  //   message: 'Each participant must be a valid UUID',
+  // })
+  // @IsNotEmpty()
+  // participants: string[];
 }
