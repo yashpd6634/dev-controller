@@ -31,7 +31,7 @@ export class ControllerAuthGuard implements CanActivate {
       if ('roomId' in request) {
         request.roomId = payload.roomId;
       }
-      request.name = payload.name;
+      request.userName = payload.name;
       return true;
     } catch (error) {
       throw new ForbiddenException('Invalid authrization token');

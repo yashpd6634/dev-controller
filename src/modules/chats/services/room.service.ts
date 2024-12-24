@@ -3,7 +3,8 @@ import { createRoomID } from 'src/common/utils/utils';
 import { CreateRoomDto } from '../dtos/room/create-room-dto';
 import { JwtService } from '@nestjs/jwt';
 import { JoinRoomDto } from '../dtos/room/join-room-dto';
-import { RoomRepository } from '../repository/room.respository';
+import { RoomRepository } from '../repository/room.repository';
+import { AddParticipantData, Room } from '../types';
 
 @Injectable()
 export class RoomService {
@@ -28,8 +29,9 @@ export class RoomService {
     const signedString = this.jwtService.sign(
       {
         // notificationID: createdNotification.notificationId,
-        name: createdRoom.title,
+        title: createdRoom.title,
         roomId: createdRoom.id,
+        userName: createRoomDto.userName,
       },
       {
         subject: createRoomDto.userId,
@@ -57,7 +59,8 @@ export class RoomService {
     const signedString = this.jwtService.sign(
       {
         roomId: joinedRoom.id,
-        name: joinedRoom.title,
+        title: joinedRoom.title,
+        userName: joinRoomDto.userName,
       },
       {
         subject: joinRoomDto.userId,
@@ -69,5 +72,20 @@ export class RoomService {
       room: joinedRoom,
       accessToken: signedString,
     };
+  }
+
+  async getRoom(roomId: string) {
+    return this.roomRepository.getRoom(roomId);
+  }
+
+  async addParticipant(addParticipantData: AddParticipantData): Promise<Room> {
+    return this.roomRepository.addParticipant(addParticipantData);
+  }
+
+  async removeParticipant(
+    roomId: string,
+    userId: string,
+  ): Promise<Room | void> {
+    return this.roomRepository.removeParticipant(roomId, userId);
   }
 }

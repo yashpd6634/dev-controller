@@ -2,10 +2,11 @@ import { Request } from 'express';
 import { Socket } from 'socket.io';
 import { RoomTypeEnum } from './enum/room-type.enum';
 
-type AuthPayload = {
+export type AuthPayload = {
   userId: string;
   roomId: string;
-  name: string;
+  userName: string;
+  title: string;
 };
 
 export type CreateRoomData = {
@@ -18,7 +19,12 @@ export type CreateRoomData = {
 export type AddParticipantData = {
   roomId: string;
   userId: string;
-  name: string;
+  userName: string;
+};
+
+export type RemoveParticipantData = {
+  roomId: string;
+  userId: string;
 };
 
 export interface Participants {

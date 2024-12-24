@@ -60,7 +60,8 @@ const createTokenMiddleware =
       if ('roomId' in payload) {
         (socket as SocketWithChatAuth).roomId = payload.roomId;
       }
-      socket.name = payload.name;
+      socket.userName = payload.userName;
+      socket.title = payload.title;
       next();
     } catch (error) {
       next(new Error('FORBIDDEN'));

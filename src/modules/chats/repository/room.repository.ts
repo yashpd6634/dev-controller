@@ -59,7 +59,7 @@ export class RoomRepository {
   }
 
   async getRoom(roomId: string): Promise<Room> {
-    this.logger.log(`Attempting to get notification with: ${roomId}`);
+    this.logger.log(`Attempting to get room with: ${roomId}`);
 
     const key = `room:${roomId}`;
 
@@ -82,10 +82,10 @@ export class RoomRepository {
   async addParticipant({
     roomId,
     userId,
-    name,
+    userName,
   }: AddParticipantData): Promise<Room> {
     this.logger.log(
-      `Attempting to add a participant with userID/name: ${userId}/${name} to pollID: ${roomId}`,
+      `Attempting to add a participant with userID/name: ${userId}/${userName} to pollID: ${roomId}`,
     );
 
     const key = `room:${roomId}`;
@@ -96,28 +96,35 @@ export class RoomRepository {
         'JSON.SET',
         key,
         participantPath,
-        JSON.stringify(name),
+        JSON.stringify(userName),
       );
 
-      const roomJSON = (await this.redisClient.call(
-        'JSON.GET',
-        key,
-        '.',
-      )) as string;
-
-      const room = JSON.parse(roomJSON) as Room;
-
-      this.logger.debug(
-        `Current Participants for pollID: ${roomId}:`,
-        room.participants,
-      );
-
-      return room;
+      return this.getRoom(roomId);
     } catch (e) {
       this.logger.error(
-        `Failed to add a participant with userID/name: ${userId}/${name} to pollID: ${roomId}`,
+        `Failed to add a participant with userID/userName: ${userId}/${userName} to roomId: ${roomId}`,
       );
       throw e;
+    }
+  }
+
+  async removeParticipant(roomId: string, userId: string): Promise<Room> {
+    this.logger.log(
+      `removing participant with userID: ${userId} from roomID: ${roomId}`,
+    );
+
+    const key = `room:${roomId}`;
+    const participantPath = `.participants.${userId}`;
+
+    try {
+      await this.redisClient.call('JSON.DEL', key, participantPath);
+
+      return this.getRoom(roomId);
+    } catch (e) {
+      this.logger.error(
+        `Failed to remove participant with userID: ${userId} from roomID: ${roomId}`,
+      );
+      throw new InternalServerErrorException();
     }
   }
 }

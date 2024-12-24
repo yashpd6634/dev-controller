@@ -40,4 +40,8 @@ export class NotificationService {
       accessToken: signedString,
     };
   }
+
+  async getNotification(notificationId) {
+    return this.notificationRepository.getNotification(notificationId);
+  }
 }

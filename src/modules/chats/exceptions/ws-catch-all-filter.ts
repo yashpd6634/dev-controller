@@ -6,7 +6,11 @@ import {
 } from '@nestjs/common';
 import { SocketWithAuth as SocketWithNotificationAuth } from 'src/modules/notification/types';
 import { SocketWithAuth as SocketWithChatAuth } from 'src/modules/chats/types';
-import { WsBadRequestException, WsUnknownException } from './ws-exceptions';
+import {
+  WsBadRequestException,
+  WsTypeException,
+  WsUnknownException,
+} from './ws-exceptions';
 
 type SocketWithAuth = SocketWithNotificationAuth | SocketWithChatAuth;
 
@@ -23,6 +27,11 @@ export class WsCatchAllFilter implements ExceptionFilter {
       );
 
       socket.emit('exception', WsException.getError());
+      return;
+    }
+
+    if (exception instanceof WsTypeException) {
+      socket.emit('exception', exception.getError());
       return;
     }
 

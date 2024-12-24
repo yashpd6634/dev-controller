@@ -19,6 +19,10 @@ export class CreateRoomDto {
   @IsOptional()
   title: string;
 
+  @IsString()
+  @IsOptional()
+  userName: string;
+
   userId: string;
 
   // @IsArray()

@@ -1,10 +1,11 @@
 import { Request } from 'express';
 import { Socket } from 'socket.io';
 
-type AuthPayload = {
+export type AuthPayload = {
   userId: string;
   notificationId: string;
-  name: string;
+  userName: string;
+  title: string;
 };
 
 // service types
