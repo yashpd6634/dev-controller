@@ -5,8 +5,9 @@ import { RoomTypeEnum } from './enum/room-type.enum';
 export type AuthPayload = {
   userId: string;
   roomId: string;
-  userName: string;
-  title: string;
+  username: string;
+  name: string;
+  email: string;
 };
 
 export type CreateRoomData = {

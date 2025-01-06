@@ -44,55 +44,55 @@ export class ChatsGateway
     const sockets = this.io.sockets;
 
     this.logger.debug(
-      `Socket connected with userID: ${client.userId}, roomId: ${client.roomId}, and name: ${client.userName}`,
+      `Socket connected with userID: ${client.userId} and name: ${client.username}`,
     );
 
     this.logger.log(`WS Client with id: ${client.id} connected!`);
     this.logger.log(`Number of connected sockets: ${sockets.size}`);
 
-    const roomName = client.roomId;
-    await client.join(roomName);
+    // const roomName = client.username;
+    // await client.join(roomName);
 
-    const connectedClients = this.io.adapter.rooms?.get(roomName)?.size ?? 0;
+    // const connectedClients = this.io.adapter.rooms?.get(roomName)?.size ?? 0;
 
-    this.logger.debug(`UserId: ${client.userId} joined room: ${roomName}`);
-    this.logger.debug(
-      `Total connected clients in room ${roomName}: ${connectedClients}`,
-    );
+    // this.logger.debug(`UserId: ${client.userId} joined room: ${roomName}`);
+    // this.logger.debug(
+    //   `Total connected clients in room ${roomName}: ${connectedClients}`,
+    // );
 
-    const updatedRoom = await this.roomService.addParticipant({
-      userId: client.userId,
-      userName: client.userName,
-      roomId: client.roomId,
-    });
+    // const updatedRoom = await this.roomService.addParticipant({
+    //   userId: client.userId,
+    //   userName: client.username,
+    //   roomId: client.roomId,
+    // });
 
-    this.io.to(roomName).emit('room_updated', updatedRoom);
+    // this.io.to(roomName).emit('room_updated', updatedRoom);
   }
   async handleDisconnect(client: SocketWithAuth) {
     const sockets = this.io.sockets;
 
     this.logger.debug(
-      `Socket connected with userID: ${client.userId}, roomId: ${client.roomId}, and name: ${client.userName}`,
+      `Socket connected with userID: ${client.userId} and name: ${client.username}`,
     );
 
-    const { userId, roomId } = client;
-    const updatedRoom = await this.roomService.removeParticipant(
-      roomId,
-      userId,
-    );
+    // const { userId, roomId } = client;
+    // const updatedRoom = await this.roomService.removeParticipant(
+    //   roomId,
+    //   userId,
+    // );
 
-    const roomName = client.roomId;
-    const clientCount = this.io.adapter.rooms?.get(roomName)?.size ?? 0;
+    // const roomName = client.roomId;
+    // const clientCount = this.io.adapter.rooms?.get(roomName)?.size ?? 0;
 
     this.logger.log(`Disconnected socket id: ${client.id}`);
     this.logger.log(`Number of connected sockets: ${sockets.size}`);
-    this.logger.debug(
-      `Total connected clients in room ${roomName}: ${clientCount}`,
-    );
+    // this.logger.debug(
+    //   `Total connected clients in room ${roomName}: ${clientCount}`,
+    // );
 
-    if (updatedRoom) {
-      this.io.to(roomName).emit('room_updated', updatedRoom);
-    }
+    // if (updatedRoom) {
+    //   this.io.to(roomName).emit('room_updated', updatedRoom);
+    // }
   }
 
   @UseGuards(GatewayAdminGuard)
@@ -113,6 +113,18 @@ export class ChatsGateway
     if (updatedRoom) {
       this.io.to(client.roomId).emit('room_updated', updatedRoom);
     }
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(client: SocketWithAuth, roomId: string) {
+    this.logger.debug(`${client.id} joining room: ${roomId}`);
+    client.join(roomId); // Client joins the specified room
+    client.emit('joinedRoom', `Joined room: ${roomId}`); // Emit a confirmation back to the client
+  }
+
+  emitToChannel(roomId: string, channelKey: string, message: any) {
+    this.io.in(roomId).emit(channelKey, message); // Use this to emit to specific channels
+    this.logger.debug(`Emitting message to channel: ${channelKey}`);
   }
 
   // @SubscribeMessage('message')

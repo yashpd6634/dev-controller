@@ -16,10 +16,10 @@ export class SocketIOAdapter extends IoAdapter {
   }
 
   createIOServer(port: number, options?: ServerOptions) {
-    const clientPort = parseInt(this.configService.get('CLIENT_PORT'));
+    const clientPortal = this.configService.get('CLIENT_PORTAL');
 
     const cors = {
-      origin: [`http://localhost:${clientPort}`],
+      origin: [`${clientPortal}`],
     };
 
     this.logger.log('Configuration SocketIO server with custom CORS options', {
@@ -53,15 +53,9 @@ const createTokenMiddleware =
     try {
       const payload = jwtService.verify(token);
       socket.userId = payload.sub;
-      if ('notificationId' in payload) {
-        (socket as SocketWithNotificationAuth).notificationId =
-          payload.notificationId;
-      }
-      if ('roomId' in payload) {
-        (socket as SocketWithChatAuth).roomId = payload.roomId;
-      }
-      socket.userName = payload.userName;
-      socket.title = payload.title;
+      socket.username = payload.username;
+      socket.name = payload.name;
+      socket.email = payload.email;
       next();
     } catch (error) {
       next(new Error('FORBIDDEN'));
